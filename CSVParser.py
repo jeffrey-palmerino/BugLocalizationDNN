@@ -44,16 +44,20 @@ Function to return the most recently submitted previous report that shares a fil
 '''
 def getMostRecentReport(filename, currentDate, dictionary):
     matchingReports = getPreviousReportByFilename(filename, currentDate, dictionary)
-
-    #Custom-define a lambda function to search the dictionary object for the Bug Report's time and sort by that
-    return max((br for br in matchingReports), key=lambda x:convertToDateTime(x.get("report_time")))
-
+    if len(matchingReports) > 0:
+        #Custom-define a lambda function to search the dictionary object for the Bug Report's time and sort by that
+        return max((br for br in matchingReports), key=lambda x:convertToDateTime(x.get("report_time")))
+    else:
+        return None
 '''
 Calculate the Bug Fixing Recency as defined by Lam et al.
 @params current bug report, most recent bug report
 '''
 def bugFixingRecency(report1, report2):
-    return 1/float(getMonthsBetween(report1.get("report_time"), report2.get("report_time")) + 1)
+    if report1 is None or report2 is None:
+        return 0;
+    else:
+        return 1/float(getMonthsBetween(report1.get("report_time"), report2.get("report_time")) + 1)
 
 '''
 Calculate the Bug Fixing Frequency as defined by Lam et al.
