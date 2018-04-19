@@ -5,7 +5,7 @@ from datetime import datetime
 A method to open a CSV file and read in data.  Converts a space delimited set of file names into a list
 '''
 def CSVToDictionary():
-    reader = csv.DictReader(open('Eclipse_Platform_UI_Trimmed.csv', 'rb'), delimiter='\t')
+    reader = csv.DictReader(open('Eclipse_Platform_UI.txt', 'rb'), delimiter='\t')
     dict_list = []
     for line in reader:
         #Strip string "list" of files & split by .java (there are spaces in the filenames, so we can't use that).  Discard empty strings & then reappend .java to filenames
@@ -25,8 +25,8 @@ Helper function to convert from string to DateTime
 @params the Date to be converted
 '''
 def convertToDateTime(date):
-    #return datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
-    return datetime.strptime(date, "%m/%d/%Y %H:%M")
+    return datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
+    #return datetime.strptime(date, "%m/%d/%Y %H:%M")
 
 '''
 Helper function to calculate the number of months between two date strings
@@ -35,7 +35,6 @@ Helper function to calculate the number of months between two date strings
 def getMonthsBetween(d1, d2):
     date1 = convertToDateTime(d1)
     date2 = convertToDateTime(d2)
-
     return abs((date1.year - date2.year) * 12 + date1.month - date2.month)
 
 '''
@@ -66,14 +65,36 @@ Calculate the Bug Fixing Frequency as defined by Lam et al.
 def bugFixingFrequency(filename, date, dictionary):
     return len(getPreviousReportByFilename(filename, date, dictionary))
 
-#MAIN FUNCTIONALITY
-device_values = CSVToDictionary()
+'''
+Calculate the collaborative filter score as defined by Lam et al.
+@params The bug report we're calculating metadata for, the filename we're checking previous bug reports for
+'''
+def collaborativeFilteringScore(report, filename, dictionary):
+    matchingReports = getPreviousReportByFilename(filename, convertToDateTime(report.get("report_time")), dictionary)
+
+    #Get combined text of matching reports and do some rVSM stuff with it
+
+allBugReports = CSVToDictionary()
 
 #Test Bug Report Recency(Note: You need to manually add "holaholahola.java" to at least 2 bug reports (I did the last 3))
-currentReport = getMostRecentReport("holaholahola.java", convertToDateTime("12/18/2013 12:04"), device_values)
-mrReport = getMostRecentReport("holaholahola.java", convertToDateTime("12/17/2013 12:04"), device_values)
-print bugFixingRecency(currentReport, mrReport)
+currentReport = getMostRecentReport("holaholahola.java", convertToDateTime("2013-12-18 12:04:45"), allBugReports)
+mrReport = getMostRecentReport("holaholahola.java", convertToDateTime("2013-12-17 12:04:54"), allBugReports)
+#print bugFixingRecency(currentReport, mrReport)
 
 #Test Bug Report Frequency (Note: You need to manually add "heyheyhey.java" to at least 2 bug reports (I did the first 5))
-currentReport2 = getMostRecentReport("heyheyhey.java", convertToDateTime("12/10/2013 12:12"), device_values)
-print bugFixingFrequency("heyheyhey.java", convertToDateTime(currentReport2.get("report_time")), device_values)
+currentReport2 = getMostRecentReport("heyheyhey.java", convertToDateTime("2013-12-10 12:12:12"), allBugReports)
+#print bugFixingFrequency("heyheyhey.java", convertToDateTime(currentReport2.get("report_time")), allBugReports)
+
+#Test looping through everything (not just manual input)
+for report in allBugReports: #loop through all reports
+    date = convertToDateTime(report.get("report_time"))
+
+    report["bugFixRec"] = []
+    report["bugFixFreq"] = []
+    for filename in report.get("files"): #loop through each file for a report
+        mostRecentReport = getMostRecentReport(filename, date, allBugReports)
+        report["bugFixRec"].append(bugFixingRecency(report, mostRecentReport))
+        report["bugFixFreq"].append(bugFixingFrequency(filename, date, allBugReports))
+
+    #print report.get("bugFixRec")
+    #print report.get("bugFixFreq")
