@@ -12,6 +12,7 @@ def getComments(text):
         cleaned = re.sub('\n+', ',', re.sub(r'[ *]+', ' ', comment.strip()).strip())
         comments.append(re.sub(' +', ' ', cleaned.translate(string.maketrans("\t", " "))))
 
+
 # TEST READ IN JAVA AND GET COMMENTS
 with open('PartServiceImpl.txt', 'r') as myfile:
     rawText = myfile.read()
