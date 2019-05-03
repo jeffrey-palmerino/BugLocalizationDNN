@@ -16,7 +16,7 @@ def CSV_To_Dictionary():
         # loop though the data in the CSV and add each question to it's corresponding list
         for report_id, file, rVSM_similarity, collab_filter, classname_similarity, bug_recency, bug_frequency, match in reader:
             if match == "1":
-                print "right"
+                print("right")
                 right.append([rVSM_similarity, collab_filter, classname_similarity, bug_recency, bug_frequency]);
             else:
                 wrong.append([rVSM_similarity, collab_filter, classname_similarity, bug_recency, bug_frequency]);
@@ -159,7 +159,7 @@ for classification, features in test.items():
 print("\n\n----------TRAINING CLASSIFIERS----------")
 print("\t-----Maxent-----")
 maxent = MaxentClassifier.train(labeledTrain)
-print "\t-----Naive Bayes-----"
+print("\t-----Naive Bayes-----")
 nb = nltk.NaiveBayesClassifier.train(labeledTrain)
 
 maxentErrors = EvaluateClassifier(maxent, labeledTest, test, possibleClassifications)
