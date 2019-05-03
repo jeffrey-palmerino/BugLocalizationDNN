@@ -13,6 +13,6 @@ for i in range(1, 3):
     X = np.concatenate((X, np.random.randn(K, 2) + i * 4 * w))
     y = np.concatenate((y, [i] * K))
 
-print X
-print '=========='
-print y
+print (X)
+print ('==========')
+print (y)

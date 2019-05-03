@@ -7,7 +7,7 @@ import random
 
 allBugReports = CP.CSVToDictionary()
 javaFiles = JF.getAllCorpus()
-print len(javaFiles)
+print(len(javaFiles))
 count = 0
 
 def getTop50WrongFiles(rightFiles, brCorpus):
@@ -29,7 +29,7 @@ def getTop50WrongFiles(rightFiles, brCorpus):
             fileInfo = [filename, one, two]
             allFiles.append(fileInfo)
         except Exception:
-            print "Error in wrong file parsing"
+            print("Error in wrong file parsing")
             del javaFiles[filename]
 
     topfifty = sorted(allFiles, key=lambda x: x[1], reverse=True)[:50]
@@ -45,7 +45,7 @@ with open('features.csv', 'wb') as featureFile:
             rawCorpus = report["rawCorpus"]
             files = report["files"]
 
-            print "===== " + report["id"] + " ====="
+            print("===== " + report["id"] + " =====")
             try:
                 for file in report["files"]:
                     src = javaFiles[file]
@@ -81,13 +81,13 @@ with open('features.csv', 'wb') as featureFile:
 
                     for wr in getTop50WrongFiles(report["files"], report["rawCorpus"]):
                         writer.writerow([report["id"], wr[0], wr[1], collaborativeFilterScore, wr[2], bugFixingRecency, bugFixingFrequency, 0])
-                    print "~~~~~~~~~~"
+                    print("~~~~~~~~~~")
             except IOError:
                 count += 1
-                print "Could not read file"
+                print("Could not read file")
             except Exception:
                 count += 1
-                print "Something went wrong parsing this file"
+                print("Something went wrong parsing this file")
 
 featureFile.close()
-print count, " files skipped"
+print(count, " files skipped")

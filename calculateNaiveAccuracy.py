@@ -45,7 +45,7 @@ topKCounts, total = calcAccuracy()
 accuracies = []
 
 for position, count in enumerate(topKCounts): #loop through each k-value and calculate its accuracy
-    print "Top", position+1, "Accuracy: ", count/float(total)
+    print("Top", position+1, "Accuracy: ", count/float(total))
     accuracies.append(count/float(total) * 100)
 
 #Plot a line graph of the accuracies
